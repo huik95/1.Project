@@ -1,0 +1,212 @@
+<font class="papago-parent"><font class="papago-source" style="display:none;"># This workflow installs the latest version of Terraform CLI and configures the Terraform CLI configuration file
+</font># 이 워크플로우는 Terraform CLI의 최신 버전을 설치하고 Terraform CLI 구성 파일을 구성함
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># with an API token for Terraform Cloud (app.terraform.io).</font># Terraform Cloud(app.terraform.io)용 API 토큰 포함.</font><font class="papago-parent"><font class="papago-source" style="display:none;"> On pull request events, this workflow will run
+</font> 꺼내기 요청 이벤트에서 이 워크플로가 실행됨
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># `terraform init`, `terraform fmt`, and `terraform plan` (speculative plan via Terraform Cloud).</font># '테라폼 초기화' '테라폼fmt' '테라폼플랜'(테라폼클라우드를 통한 계산계획)</font><font class="papago-parent"><font class="papago-source" style="display:none;"> On push events
+</font> 푸시 이벤트 시
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># to the main branch, `terraform apply` will be executed.</font># 본지점 '터라폼 적용' 실시</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
+</font># https://github.com/hashicorp/setup-terraform에 있는 hashicorp/setup-terraform 문서
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># To use this workflow, you will need to complete the following setup steps.</font># 이 워크플로우를 사용하려면 다음 설정 단계를 완료해야 한다.</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># 1. Create a `main.tf` file in the root of this repository with the `remote` backend and one or more resources defined.</font># 1. '원격' 백엔드와 하나 이상의 리소스를 정의하여 이 저장소의 루트에 'main.tf' 파일을 생성한다.</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#   Example `main.tf`:</font># main.tf의 예:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     # The configuration for the `remote` backend.</font># '원격' 백엔드 구성</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     terraform {
+</font># 테라포름 {
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#       backend "remote" {
+</font># 백엔드 "원격" {
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#         # The name of your Terraform Cloud organization.</font># Terraform Cloud 조직의 이름.</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#         organization = "example-organization"
+</font># 조직 = "조직 조직"
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#         # The name of the Terraform Cloud workspace to store Terraform state files in.</font># # Terraform 상태 파일을 저장할 Terraform Cloud 작업 공간의 이름.</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#         workspaces {
+</font># 워크스페이스 {
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#           name = "example-workspace"
+</font># 이름 = " "-workspace"
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#         }
+</font>#         }
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#       }
+</font>#       }
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     }
+</font>#     }
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     # An example resource that does nothing.</font># 아무것도 하지 않는 자원의 예</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     resource "null_resource" "example" {
+</font># 리소스 "instance_instance" "instance" {
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#       triggers = {
+</font># 트리거 = {
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#         value = "A example resource that does nothing!</font>#값 = "아무 일도 하지 않는 예제 자원!</font><font class="papago-parent"><font class="papago-source" style="display:none;">"
+</font>"
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#       }
+</font>#       }
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     }
+</font>#     }
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># 2. Generate a Terraform Cloud user API token and store it as a GitHub secret (e.g. TF_API_TOKEN) on this repository.</font># 2. Terraform Cloud 사용자 API 토큰을 생성하여 이 저장소에 GitHub 비밀(예: TF_API_TOKEN)으로 저장한다.</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#   Documentation:</font># 문서화:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     - https://www.terraform.io/docs/cloud/users-teams-organizations/api-tokens.html
+</font># - https://www.terraform.io/docs/cloud/users-teams-organizations/api-tokens.html
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     - https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
+</font># - https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#
+</font>#
+</font><font class="papago-parent"><font class="papago-source" style="display:none;"># 3. Reference the GitHub secret in step using the `hashicorp/setup-terraform` GitHub Action.</font># 3. '해시코프/setup-terraform' GitHub Action을 이용하여 단계별로 GitHub 비밀을 참조한다.</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#   Example:</font># 예:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#     - name:</font># - 이름:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> Setup Terraform
+</font> Terraform 설정
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#       uses: hashicorp/setup-terraform@v1
+</font># 용도: hashicorp/messages-terraform@v1
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#       with:</font># 포함:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">#         cli_config_credentials_token: ${{ secrets.</font># cli_config_filename_filename: ${비밀.</font><font class="papago-parent"><font class="papago-source" style="display:none;">TF_API_TOKEN }}
+</font>TF_API_TOKEN }}
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">name: 'Terraform'
+</font>이름: '테라폼'
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">on:
+</font>에:
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">  push:
+</font>  푸시:
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    branches:</font>    가지:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    - main
+</font>    - 메인
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">  pull_request:</font>  pull_message:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">jobs:
+</font>직업:
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">  terraform:</font>  테라포름:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    name: 'Terraform'
+</font>    이름: '테라폼'
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    runs-on: ubuntu-latest
+</font>    런온: Ubuntu-luntu-luntu
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    environment: production
+</font>    환경: 생산
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+</font>    # GitHub Actions 주자가 ubuntu-latest, macos-latest 또는 window-latest에 관계없이 Bash 셸 사용
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    defaults:</font>    기본 값:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      run:
+</font>      운영:
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">        shell: bash
+</font>        셸: bash
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    steps:</font>    단계:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    # Checkout the repository to the GitHub Actions runner
+</font>    # GitHub Actions 러너에게 저장소 체크아웃
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    - name:</font>    - 이름:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> Checkout
+</font> 결제
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      uses: actions/checkout@v2
+</font>      사용: 동작/sv@v2
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+</font>    # Terraform CLI 최신 버전 설치 및 Terraform Cloud 사용자 API 토큰으로 Terraform CLI 구성 파일 구성
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    - name:</font>    - 이름:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> Setup Terraform
+</font> Terraform 설정
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      uses: hashicorp/setup-terraform@v1
+</font>      사용: hashicorp/changes-terraform@v1
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      with:</font>      로:</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">        cli_config_credentials_token: ${{ secrets.</font>        cli_config_filename_filename: ${비밀.</font><font class="papago-parent"><font class="papago-source" style="display:none;">TF_API_TOKEN }}
+</font>TF_API_TOKEN }}
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+</font>    # 초기 파일 작성, 원격 상태 로딩, 모듈 다운로드 등을 통해 신규 또는 기존 Terraform 작업 디렉토리를 초기화한다.
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    - name:</font>    - 이름:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> Terraform Init
+</font> 테라폼 초기화
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      run: terraform init
+</font>      실행: 테라포름 초기화
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    # Checks that all Terraform configuration files adhere to a canonical format
+</font>    # 모든 Terraform 구성 파일이 표준 형식을 준수하는지 확인
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    - name:</font>    - 이름:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> Terraform Format
+</font> 테라폼 형식
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      run: terraform fmt -check
+</font>      실행: Terraform fmt -check
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    # Generates an execution plan for Terraform
+</font>    # Terraform 실행 계획 생성
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    - name:</font>    - 이름:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> Terraform Plan
+</font> 테라폼 계획
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      run: terraform plan
+</font>      실행: 테라폼 계획
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">
+</font>
+
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      # On push to main, build or change infrastructure according to Terraform configuration files
+</font>      # Terraform 구성 파일에 따라 기본, 구축 또는 인프라 변경 시
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      # Note:</font>      # 참고:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud".</font> 리포지토리에서 "Terraform Cloud"에 대해 필요한 "엄격한" 상태 검사를 설정하는 것이 좋다.</font><font class="papago-parent"><font class="papago-source" style="display:none;"> See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+</font> 자세한 내용은 "필수 상태 점검"에 대한 설명서를 참조하십시오. https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">    - name:</font>    - 이름:</font><font class="papago-parent"><font class="papago-source" style="display:none;"> Terraform Apply
+</font> 테라폼 적용
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+</font>      if: github.ref == 'refs/heads/main' &&github.event_name == 'refs'
+</font><font class="papago-parent"><font class="papago-source" style="display:none;">      run: terraform apply -auto-approve
+</font>      실행: 테라포름 적용 -자동-수정
+</font>
